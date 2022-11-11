@@ -73,8 +73,9 @@ def get_model_tuner(hp):
         hp (kt.HyperParameters): object to setting hyperparameters
 
     Returns:
-        tf.keras.Model: model as a Keras Object
+        tf.keras.Model: model as a Keras object
     """
+    
     num_hidden_layers = hp.Choice(
         "num_hidden_layers",
         values=[1, 2, 3],
@@ -135,17 +136,8 @@ def tuner_fn(fn_args):
 
     tf_transform_output = tft.TFTransformOutput(fn_args.transform_graph_path)
 
-    train_set = input_fn(
-        fn_args.train_files[0],
-        tf_transform_output,
-        NUM_EPOCHS,
-    )
-
-    eval_set = input_fn(
-        fn_args.eval_files[0],
-        tf_transform_output,
-        NUM_EPOCHS,
-    )
+    train_set = input_fn(fn_args.train_files[0], tf_transform_output,)
+    eval_set = input_fn(fn_args.eval_files[0], tf_transform_output,)
 
     tuner = kt.Hyperband(
         hypermodel=get_model_tuner,
