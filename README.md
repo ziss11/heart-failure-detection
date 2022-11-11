@@ -1,26 +1,18 @@
-# stroke-prediction
+# Submission 1: Stroke Prediction
 
-<!-- - Install CLI heroku ([tautan](https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli))
-- Login ke heroku melalui CLI dengan perintah berikut.
+Nama: Abdul Azis
 
-```
-heroku login
-```
+Username dicoding: zizz1181
 
-- Login ke heroku container registry ([dokumentasi](https://devcenter.heroku.com/articles/container-registry-and-runtime#logging-in-to-the-registry:~:text=%24-,heroku%20container%3Alogin,-or%20directly%20via))
-
-```
-heroku container:login
-```
-
-- Push container ke heroku container registry
-
-```
-heroku container:push web -a telco-churn-predictions
-```
-
-- Release model serving
-
-```
-heroku container:release web -a telco-churn-predictions
-``` -->
+| | Deskripsi |
+| ----------- | ----------- |
+| Dataset | [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) |
+| Masalah | Deskripsi masalah yang di angkat |
+| Solusi machine learning | Deskripsi solusi machine learning yang akan dibuat |
+| Metode pengolahan | Deskripsi metode pengolahan data yang digunakan |
+| Arsitektur model | Deskripsi arsitektur model yang diguanakan |
+| Metrik evaluasi | Deksripsi metrik yang digunakan untuk mengevaluasi performa model |
+| Performa model | Deksripsi performa model yang dibuat |
+| Opsi deployment | Deksripsi tentang opsi deployment |
+| Web app | Tautan web app yang digunakan untuk mengakses model serving |
+| Monitoring | Deksripsi terkait hasil monitoring dari model serving |
