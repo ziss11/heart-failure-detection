@@ -1,14 +1,14 @@
 import tensorflow as tf
 import tensorflow_transform as tft
 
-CATEGORICAL_FEATURE = {
+CATEGORICAL_FEATURES = {
     "ever_married": 2,
     "work_type": 5,
     "Residence_type": 2,
     "smoking_status": 4,
 }
 
-NUMERICAL_FEATURE = [
+NUMERICAL_FEATURES = [
     "age",
     "hypertension",
     "heart_disease",
@@ -59,14 +59,14 @@ def preprocessing_fn(inputs):
 
     outputs = dict()
 
-    for key in CATEGORICAL_FEATURE:
-        dim = CATEGORICAL_FEATURE[key]
+    for key in CATEGORICAL_FEATURES:
+        dim = CATEGORICAL_FEATURES[key]
 
         int_value = tft.compute_and_apply_vocabulary(inputs[key], top_k=dim+1)
         outputs[transformed_name(key)] = convert_num_to_one_hot(
             int_value, num_labesl=dim+1)
 
-    for feature in NUMERICAL_FEATURE:
+    for feature in NUMERICAL_FEATURES:
         outputs[transformed_name(feature)] = tft.scale_to_0_1(inputs[feature])
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.int64)
