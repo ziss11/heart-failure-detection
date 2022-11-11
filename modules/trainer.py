@@ -83,7 +83,7 @@ def run_fn(fn_args):
     Args:
         fn_args (FnArgs): Holds args used to train the model as name/value pairs.
     """
-    
+
     hp = fn_args.hyperparameters["values"]
     log_dir = os.path.join(os.path.dirname(fn_args.serving_model_dir), "logs")
 
@@ -93,19 +93,19 @@ def run_fn(fn_args):
     eval_set = input_fn(fn_args.eval_files, tf_transform_output)
 
     model = get_model(hp)
-    
+
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
         log_dir=log_dir,
         update_freq="batch"
     )
-    
+
     early_stop_callbacks = tf.keras.callbacks.EarlyStopping(
         monitor="val_binary_accuracy",
         mode="max",
         verbose=1,
         patience=10,
     )
-    
+
     model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
         fn_args.serving_model_dir,
         monitor="val_binary_accuracy",
@@ -113,13 +113,13 @@ def run_fn(fn_args):
         verbose=1,
         save_best_only=True,
     )
-    
+
     callbacks = [
-        tensorboard_callback, 
-        early_stop_callbacks, 
+        tensorboard_callback,
+        early_stop_callbacks,
         model_checkpoint_callback
     ]
-    
+
     model.fit(
         train_set,
         steps_per_epoch=fn_args.train_steps,
@@ -129,7 +129,7 @@ def run_fn(fn_args):
         epochs=NUM_EPOCHS,
         verbose=1,
     )
-    
+
     signatures = {
         "serving_default": get_serve_tf_examples_fn(
             model, tf_transform_output,
@@ -137,15 +137,15 @@ def run_fn(fn_args):
             tf.TensorSpec(shape=[None], dtype=tf.string, name="examples")
         ),
     }
-    
+
     model.save(
-        fn_args.serving_model_dir, 
-        save_format="tf", 
+        fn_args.serving_model_dir,
+        save_format="tf",
         signatures=signatures,
     )
-    
+
     plot_model(
-        model, 
+        model,
         to_file="images/model_plot.png",
         show_shapes=True,
         show_layer_names=True,
