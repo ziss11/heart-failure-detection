@@ -12,7 +12,7 @@ NUM_EPOCHS = 5
 
 TunerFnResult = NamedTuple("TunerFnResult", [
     ("tuner", base_tuner.BaseTuner),
-    ("fit_kwargs", Dict(Text, Any)),
+    ("fit_kwargs", Dict[Text, Any]),
 ])
 
 early_stop = tf.keras.callbacks.EarlyStopping(
@@ -103,13 +103,13 @@ def get_model_tuner(hp):
             layers.Input(shape=(1,), name=transformed_name(feature))
         )
 
-    concatenate = layers.Concatenate(input_features)
+    concatenate = layers.concatenate(input_features)
     x = layers.Dense(dense_unit, activation=tf.nn.relu)(concatenate)
 
     for _ in range(num_hidden_layers):
         x = layers.Dense(dense_unit, activation=tf.nn.relu)(x)
 
-    outputs = layers.Dense(1, activation=tf.nn.sigmoid)
+    outputs = layers.Dense(1, activation=tf.nn.sigmoid)(x)
 
     model = tf.keras.Model(inputs=input_features, outputs=outputs)
 

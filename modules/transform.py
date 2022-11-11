@@ -2,6 +2,7 @@ import tensorflow as tf
 import tensorflow_transform as tft
 
 CATEGORICAL_FEATURES = {
+    "gender": 2,
     "ever_married": 2,
     "work_type": 5,
     "Residence_type": 2,
@@ -13,7 +14,7 @@ NUMERICAL_FEATURES = [
     "hypertension",
     "heart_disease",
     "avg_glucose_level",
-    "bmi",
+    # "bmi",
 ]
 
 LABEL_KEY = "stroke"
@@ -64,9 +65,16 @@ def preprocessing_fn(inputs):
 
         int_value = tft.compute_and_apply_vocabulary(inputs[key], top_k=dim+1)
         outputs[transformed_name(key)] = convert_num_to_one_hot(
-            int_value, num_labesl=dim+1)
+            int_value, num_labels=dim+1)
 
     for feature in NUMERICAL_FEATURES:
+        if feature == "bmi":
+            non_nan_value = tf.where(
+                tf.math.is_nan(inputs[feature]),
+                tf.zeros_like(inputs[feature]),
+                inputs[feature]
+            )
+            
         outputs[transformed_name(feature)] = tft.scale_to_0_1(inputs[feature])
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.int64)

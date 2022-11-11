@@ -14,7 +14,9 @@ def get_serve_tf_examples_fn(model, tf_transform_output):
 
     model.tft_layer = tf_transform_output.transform_features_layer()
 
-    @tf.function()
+    @tf.function(input_signature=[
+        tf.TensorSpec(shape=[None], dtype=tf.string, name="examples"),
+    ])
     def serve_tf_examples_fn(serialized_tf_examples):
         """Return the output to be used in the serving signature."""
 
@@ -56,13 +58,13 @@ def get_model(hp):
             layers.Input(shape=(1,), name=transformed_name(feature))
         )
 
-    concatenate = layers.Concatenate(input_features)
+    concatenate = layers.concatenate(input_features)
     x = layers.Dense(hp["dense_unit"], activation=tf.nn.relu)(concatenate)
 
     for _ in range(hp["num_hidden_layers"]):
         x = layers.Dense(hp["dense_unit"], activation=tf.nn.relu)(x)
 
-    outputs = layers.Dense(1, activation=tf.nn.sigmoid)
+    outputs = layers.Dense(1, activation=tf.nn.sigmoid)(x)
 
     model = tf.keras.Model(inputs=input_features, outputs=outputs)
 
@@ -133,9 +135,7 @@ def run_fn(fn_args):
     signatures = {
         "serving_default": get_serve_tf_examples_fn(
             model, tf_transform_output,
-        ).get_concrete_function(
-            tf.TensorSpec(shape=[None], dtype=tf.string, name="examples")
-        ),
+        )
     }
 
     model.save(
