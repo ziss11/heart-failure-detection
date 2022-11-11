@@ -6,7 +6,7 @@ from keras import layers
 from keras.utils.vis_utils import plot_model
 from transform import (CATEGORICAL_FEATURES, LABEL_KEY, NUMERICAL_FEATURES,
                        transformed_name)
-from tuner import NUM_EPOCHS, input_fn
+from tuner import input_fn
 
 
 def get_serve_tf_examples_fn(model, tf_transform_output):
@@ -20,7 +20,7 @@ def get_serve_tf_examples_fn(model, tf_transform_output):
     def serve_tf_examples_fn(serialized_tf_examples):
         """Return the output to be used in the serving signature."""
 
-        feature_spec = tf_transform_output.raw_features_spec()
+        feature_spec = tf_transform_output.raw_feature_spec()
         feature_spec.pop(LABEL_KEY)
 
         parsed_features = tf.io.parse_example(
@@ -128,7 +128,7 @@ def run_fn(fn_args):
         validation_data=eval_set,
         validation_steps=fn_args.eval_steps,
         callbacks=callbacks,
-        epochs=NUM_EPOCHS,
+        epochs=hp["tuner/initial_epoch"],
         verbose=1,
     )
 
