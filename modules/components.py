@@ -12,7 +12,7 @@ from tfx.types import Channel
 from tfx.types.standard_artifacts import Model, ModelBlessing
 
 
-def init_component(
+def init_components(
     data_dir,
     transform_module,
     trainer_module,
@@ -37,9 +37,9 @@ def init_component(
     """
     output = example_gen_pb2.Output(
         split_config=example_gen_pb2.SplitConfig(splits=[
-            example_gen_pb2.SplitConfig.Split(name="train", hash_bucket=8),
-            example_gen_pb2.SplitConfig.Split(name="eval", hash_bucket=2),
-        ]),
+            example_gen_pb2.SplitConfig.Split(name="train", hash_buckets=8),
+            example_gen_pb2.SplitConfig.Split(name="eval", hash_buckets=2),
+        ])
     )
 
     example_gen = CsvExampleGen(
@@ -68,22 +68,22 @@ def init_component(
 
     tuner = Tuner(
         module_file=os.path.abspath(tuner_module),
-        examples=transform.outputs["transformed_example"],
+        examples=transform.outputs["transformed_examples"],
         transform_graph=transform.outputs["transform_graph"],
         schema=schema_gen.outputs["schema"],
         train_args=trainer_pb2.TrainArgs(
-            name="train",
+            splits=["train"],
             num_steps=train_steps,
         ),
-        eval_steps=trainer_pb2.EvalArgs(
-            name="eval",
+        eval_args=trainer_pb2.EvalArgs(
+            splits=["eval"],
             num_steps=eval_steps,
         ),
     )
 
     trainer = Trainer(
         module_file=trainer_module,
-        examples=transform.outputs["transformed_example"],
+        examples=transform.outputs["transformed_examples"],
         transform_graph=transform.outputs["transform_graph"],
         schema=schema_gen.outputs["schema"],
         hyperparameters=tuner.outputs["best_hyperparameters"],
@@ -105,7 +105,7 @@ def init_component(
 
     slicing_specs = [
         tfma.SlicingSpec(),
-        tfma.SlicingSpec(features_key=[
+        tfma.SlicingSpec(feature_keys=[
             "gender",
             "smoking_status",
         ]),
@@ -121,24 +121,25 @@ def init_component(
             tfma.MetricConfig(class_name="FalsePositives"),
             tfma.MetricConfig(class_name="TrueNegatives"),
             tfma.MetricConfig(class_name="FalseNegatives"),
-            tfma.MetricConfig(class_name="BinaryAccuracy",
-                              threshold=tfma.MetricThreshold(
-                                  value_threshold=tfma.GenericValueThreshold(
-                                      lower_bound={"value": .6},
-                                  ),
-                                  change_threshold=tfma.GenericChangeThreshold(
-                                      direction=tfma.MetricDirection.HIGHER_IS_BETTER,
-                                      absolute={"value": 1e-4},
-                                  ),
-                              ),
-                              ),
+            tfma.MetricConfig(
+                class_name="BinaryAccuracy",
+                threshold=tfma.MetricThreshold(
+                    value_threshold=tfma.GenericValueThreshold(
+                        lower_bound={"value": .6},
+                    ),
+                    change_threshold=tfma.GenericChangeThreshold(
+                        direction=tfma.MetricDirection.HIGHER_IS_BETTER,
+                        absolute={"value": 1e-4},
+                    ),
+                ),
+            ),
         ]),
     ]
 
     eval_config = tfma.EvalConfig(
         model_specs=[tfma.ModelSpec(label_key="stroke")],
         slicing_specs=slicing_specs,
-        metric_specs=metric_specs,
+        metrics_specs=metric_specs,
     )
 
     evaluator = Evaluator(
@@ -164,6 +165,7 @@ def init_component(
         schema_gen,
         example_validator,
         transform,
+        tuner,
         trainer,
         model_resolver,
         evaluator,

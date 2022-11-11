@@ -2,7 +2,7 @@ from absl import logging
 from tfx.orchestration import metadata, pipeline
 
 
-def pipeline(args):
+def init_pipeline(args):
     logging.info(f"Pipeline root set to: {args['pipeline_root']}")
 
     beam_args = [
