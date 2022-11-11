@@ -68,14 +68,13 @@ def preprocessing_fn(inputs):
             int_value, num_labels=dim+1)
 
     for feature in NUMERICAL_FEATURES:
-        if feature == "bmi":
-            non_nan_value = tf.where(
-                tf.math.is_nan(inputs[feature]),
-                tf.zeros_like(inputs[feature]),
-                inputs[feature]
-            )
-            
-        outputs[transformed_name(feature)] = tft.scale_to_0_1(inputs[feature])
+        inputs[feature] = tf.cast(inputs[feature], tf.float64)
+        non_nan_value = tf.where(
+            tf.math.is_nan(inputs[feature]),
+            tf.zeros_like(inputs[feature]),
+            inputs[feature]
+        )
+        outputs[transformed_name(feature)] = tft.scale_to_0_1(non_nan_value)
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.int64)
 
