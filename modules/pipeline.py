@@ -1,6 +1,5 @@
 from absl import logging
 from tfx.orchestration import metadata, pipeline
-from tfx.orchestration.beam.beam_dag_runner import BeamDagRunner
 
 
 def pipeline(args):
