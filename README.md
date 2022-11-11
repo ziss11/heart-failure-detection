@@ -1,4 +1,4 @@
-# Submission 1: Stroke Prediction
+# Submission 2: Stroke Prediction
 
 Nama: Abdul Azis
 
