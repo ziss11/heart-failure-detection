@@ -1,6 +1,3 @@
-import os
-from typing import Text
-
 from absl import logging
 from tfx.orchestration import metadata, pipeline
 from tfx.orchestration.beam.beam_dag_runner import BeamDagRunner
