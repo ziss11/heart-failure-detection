@@ -1,23 +1,25 @@
+import pandas as pd
 import tensorflow as tf
 import tensorflow_transform as tft
 
 CATEGORICAL_FEATURES = {
-    "gender": 2,
-    "ever_married": 2,
-    "work_type": 5,
-    "Residence_type": 2,
-    "smoking_status": 4,
+    "Sex": 2,
+    "ChestPainType": 4,
+    "RestingECG": 3,
+    "ExerciseAngina": 2,
+    "ST_Slope": 3,
 }
 
 NUMERICAL_FEATURES = [
-    "age",
-    "hypertension",
-    "heart_disease",
-    "avg_glucose_level",
-    # "bmi",
+    "Age",
+    "RestingBP",
+    "Cholesterol",
+    "FastingBS",
+    "MaxHR",
+    "Oldpeak",
 ]
 
-LABEL_KEY = "stroke"
+LABEL_KEY = "HeartDisease"
 
 
 def transformed_name(key):
@@ -48,6 +50,23 @@ def convert_num_to_one_hot(label_tensor, num_labels=2):
     return tf.reshape(one_hot_tensor, [-1, num_labels])
 
 
+def replace_nan(tensor):
+    """Replace nan value with zero number
+
+    Args:
+        tensor (list): list data with na data that want to replace
+
+    Returns:
+        list with replaced nan value
+    """
+    tensor = tf.cast(tensor, tf.float64)
+    return tf.where(
+        tf.math.is_nan(tensor),
+        tft.mean(tensor),
+        tensor
+    )
+
+
 def preprocessing_fn(inputs):
     """Preprocess input features into transformed features
 
@@ -68,13 +87,8 @@ def preprocessing_fn(inputs):
             int_value, num_labels=dim+1)
 
     for feature in NUMERICAL_FEATURES:
-        inputs[feature] = tf.cast(inputs[feature], tf.float64)
-        non_nan_value = tf.where(
-            tf.math.is_nan(inputs[feature]),
-            tf.zeros_like(inputs[feature]),
-            inputs[feature]
-        )
-        outputs[transformed_name(feature)] = tft.scale_to_0_1(non_nan_value)
+        inputs[feature] = replace_nan(inputs[feature])
+        outputs[transformed_name(feature)] = tft.scale_to_0_1(inputs[feature])
 
     outputs[transformed_name(LABEL_KEY)] = tf.cast(inputs[LABEL_KEY], tf.int64)
 

@@ -1,9 +1,9 @@
 FROM tensorflow/serving:2.8.0
 
-COPY ./outputs/serving_model /models/stroke-model
+COPY ./outputs/serving_model /models/heart-failure-model
 COPY ./config /model_config
 
-ENV MODEL_NAME=stroke-model
+ENV MODEL_NAME=heart-failure-model
 ENV MONITORING_CONFIG="/model_config/prometheus.config"
 ENV PORT=8501
 

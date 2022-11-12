@@ -86,6 +86,12 @@ def get_model_tuner(hp):
         max_value=256,
         step=32,
     )
+    dropout_rate = hp.Float(
+        "dropout_rate",
+        min_value=0.1,
+        max_value=0.9,
+        step=0.1,
+    )
     learning_rate = hp.Choice(
         "learning_rate",
         values=[1e-2, 1e-3, 1e-4]
@@ -108,6 +114,7 @@ def get_model_tuner(hp):
 
     for _ in range(num_hidden_layers):
         x = layers.Dense(dense_unit, activation=tf.nn.relu)(x)
+        x = layers.Dropout(dropout_rate)(x)
 
     outputs = layers.Dense(1, activation=tf.nn.sigmoid)(x)
 
@@ -142,8 +149,8 @@ def tuner_fn(fn_args):
     tuner = kt.Hyperband(
         hypermodel=get_model_tuner,
         objective=kt.Objective(
-            "binary_accuracy",
-            direction="max",
+            "val_loss",
+            direction="min",
         ),
         max_epochs=NUM_EPOCHS,
         factor=3,

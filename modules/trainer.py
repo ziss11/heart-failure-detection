@@ -3,7 +3,6 @@ import os
 import tensorflow as tf
 import tensorflow_transform as tft
 from keras import layers
-from keras.utils.vis_utils import plot_model
 from transform import (CATEGORICAL_FEATURES, LABEL_KEY, NUMERICAL_FEATURES,
                        transformed_name)
 from tuner import input_fn
@@ -63,6 +62,7 @@ def get_model(hp):
 
     for _ in range(hp["num_hidden_layers"]):
         x = layers.Dense(hp["dense_unit"], activation=tf.nn.relu)(x)
+        x = layers.Dropout(hp["dropout_rate"])(x)
 
     outputs = layers.Dense(1, activation=tf.nn.sigmoid)(x)
 
@@ -142,11 +142,4 @@ def run_fn(fn_args):
         fn_args.serving_model_dir,
         save_format="tf",
         signatures=signatures,
-    )
-
-    plot_model(
-        model,
-        to_file="images/model_plot.png",
-        show_shapes=True,
-        show_layer_names=True,
     )

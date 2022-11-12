@@ -1,4 +1,4 @@
-# Submission 2: Stroke Prediction
+# Submission 2: Heart Failure Prediction
 
 Nama: Abdul Azis
 
@@ -6,7 +6,7 @@ Username dicoding: zizz1181
 
 | | Deskripsi |
 | ----------- | ----------- |
-| Dataset | [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) |
+| Dataset | [Heart Failure Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/heart-failure-prediction) |
 | Masalah | Deskripsi masalah yang di angkat |
 | Solusi machine learning | Deskripsi solusi machine learning yang akan dibuat |
 | Metode pengolahan | Deskripsi metode pengolahan data yang digunakan |
