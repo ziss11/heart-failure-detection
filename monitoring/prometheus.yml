@@ -9,4 +9,4 @@ scrape_configs:
     scrape_interval: 5s
     metrics_path: /monitoring/prometheus/metrics
     static_configs:
-      - targets: ["stroke-preds.herokuapp.com"]
+      - targets: ["hf-pred.herokuapp.com"]
