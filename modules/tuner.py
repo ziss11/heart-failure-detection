@@ -1,3 +1,11 @@
+"""
+Author: Abdul Azis
+Date: 12/11/2022
+This is the tuner.py module.
+Usage:
+- Tuning model hyperparameters to get the best hyperparameters
+"""
+
 from typing import Any, Dict, NamedTuple, Text
 
 import keras_tuner as kt
@@ -41,13 +49,13 @@ def input_fn(file_pattern, tf_transform_output, batch_size=64):
 
     Args:
         file_pattern: input tf_record file pattern
-        tf_transform_output: a TFTransformOutput 
-        batch_size: representing the number of consecutive elements of 
+        tf_transform_output: a TFTransformOutput
+        batch_size: representing the number of consecutive elements of
         returned dataset to combine in a single batch. Defaults to 64.
 
     Returns:
         a dataset that contains (featurs, indices) tuple where features
-        is a dictionary of Tensors, and indices is a single Tensor of 
+        is a dictionary of Tensors, and indices is a single Tensor of
         label indices
     """
 
@@ -66,38 +74,38 @@ def input_fn(file_pattern, tf_transform_output, batch_size=64):
     return dataset
 
 
-def get_model_tuner(hp):
+def get_model_tuner(hyperparameters):
     """This function defines a keras Model
 
     Args:
-        hp (kt.HyperParameters): object to setting hyperparameters
+        hyperparameters (kt.HyperParameters): object to setting hyperparameters
 
     Returns:
         tf.keras.Model: model as a Keras object
     """
-    
-    num_hidden_layers = hp.Choice(
+
+    num_hidden_layers = hyperparameters.Choice(
         "num_hidden_layers",
         values=[1, 2, 3],
     )
-    dense_unit = hp.Int(
+    dense_unit = hyperparameters.Int(
         "dense_unit",
         min_value=16,
         max_value=256,
         step=32,
     )
-    dropout_rate = hp.Float(
+    dropout_rate = hyperparameters.Float(
         "dropout_rate",
         min_value=0.1,
         max_value=0.9,
         step=0.1,
     )
-    learning_rate = hp.Choice(
+    learning_rate = hyperparameters.Choice(
         "learning_rate",
         values=[1e-2, 1e-3, 1e-4]
     )
 
-    input_features = list()
+    input_features = []
 
     for key, dim in CATEGORICAL_FEATURES.items():
         input_features.append(
@@ -110,13 +118,13 @@ def get_model_tuner(hp):
         )
 
     concatenate = layers.concatenate(input_features)
-    x = layers.Dense(dense_unit, activation=tf.nn.relu)(concatenate)
+    deep = layers.Dense(dense_unit, activation=tf.nn.relu)(concatenate)
 
     for _ in range(num_hidden_layers):
-        x = layers.Dense(dense_unit, activation=tf.nn.relu)(x)
-        x = layers.Dropout(dropout_rate)(x)
+        deep = layers.Dense(dense_unit, activation=tf.nn.relu)(deep)
+        deep = layers.Dropout(dropout_rate)(deep)
 
-    outputs = layers.Dense(1, activation=tf.nn.sigmoid)(x)
+    outputs = layers.Dense(1, activation=tf.nn.sigmoid)(deep)
 
     model = tf.keras.Model(inputs=input_features, outputs=outputs)
 

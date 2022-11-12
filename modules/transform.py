@@ -1,4 +1,11 @@
-import pandas as pd
+"""
+Author: Abdul Azis
+Date: 12/11/2022
+This is the transform.py module.
+Usage:
+- Transform feature and label data
+"""
+
 import tensorflow as tf
 import tensorflow_transform as tft
 
@@ -77,14 +84,13 @@ def preprocessing_fn(inputs):
         dict: map from features keys to transformed features
     """
 
-    outputs = dict()
+    outputs = {}
 
-    for key in CATEGORICAL_FEATURES:
-        dim = CATEGORICAL_FEATURES[key]
-
-        int_value = tft.compute_and_apply_vocabulary(inputs[key], top_k=dim+1)
-        outputs[transformed_name(key)] = convert_num_to_one_hot(
-            int_value, num_labels=dim+1)
+    for keys, values in CATEGORICAL_FEATURES.items():
+        int_value = tft.compute_and_apply_vocabulary(
+            inputs[keys], top_k=values+1)
+        outputs[transformed_name(keys)] = convert_num_to_one_hot(
+            int_value, num_labels=values+1)
 
     for feature in NUMERICAL_FEATURES:
         inputs[feature] = replace_nan(inputs[feature])

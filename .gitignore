@@ -1,2 +1,6 @@
 /outputs/
 /modules/__pycache__/
+
+*.zip
+*.png
+*.jpg
