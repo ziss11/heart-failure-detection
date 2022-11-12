@@ -123,7 +123,7 @@ def run_fn(fn_args):
     ]
 
     model.fit(
-        train_set,
+        x=train_set,
         steps_per_epoch=fn_args.train_steps,
         validation_data=eval_set,
         validation_steps=fn_args.eval_steps,

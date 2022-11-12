@@ -105,10 +105,7 @@ def init_components(
 
     slicing_specs = [
         tfma.SlicingSpec(),
-        tfma.SlicingSpec(feature_keys=[
-            "gender",
-            "smoking_status",
-        ]),
+        tfma.SlicingSpec(feature_keys=["Sex"]),
     ]
 
     metric_specs = [
@@ -137,7 +134,7 @@ def init_components(
     ]
 
     eval_config = tfma.EvalConfig(
-        model_specs=[tfma.ModelSpec(label_key="stroke")],
+        model_specs=[tfma.ModelSpec(label_key="HeartDisease")],
         slicing_specs=slicing_specs,
         metrics_specs=metric_specs,
     )
